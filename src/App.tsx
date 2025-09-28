@@ -36,7 +36,7 @@ export default function App (){
             <form onSubmit={handleSubmit}>
                 <input
                     value={task}
-                    onChange={(e) => setTask(e.target.value) }
+                    onChange={(e:React.ChangeEvent<HTMLInputElement>) => setTask(e.target.value) }
                     placeholder="New Task"
                 />
                 <button type="submit">Add Task</button>
@@ -62,12 +62,12 @@ export default function App (){
                             type="checkbox"
                             checked={toDo.done}
                             onChange={() => toggleToDo(toDo.id)}
-                            onClick={(e)=> e.stopPropagation()}
+                            onClick={(e:React.MouseEvent<HTMLInputElement>)=> e.stopPropagation()}
                         />
                         <span>
                             {toDo.task}
                         </span>
-                        <button onClick={(e) => { e.stopPropagation(); removeToDo(toDo.id)}}>
+                        <button onClick={(e:React.MouseEvent<HTMLButtonElement>) => { e.stopPropagation(); removeToDo(toDo.id)}}>
                             x
                         </button>
                     </li>
