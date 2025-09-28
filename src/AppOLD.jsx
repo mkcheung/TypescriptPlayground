@@ -1,17 +1,11 @@
 import React, { useState } from 'react'
 import './App.css'
 
-interface ToDos {
-    id:string
-    task:string
-    done:boolean
-}
-
 export default function App (){
-    const [toDos, setToDos] = useState<ToDos[]>([]);
-    const [task, setTask] = useState<string>('');
+    const [toDos, setToDos] = useState([]);
+    const [task, setTask] = useState('');
 
-    const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         const value = task.trim();
         if(!value){
@@ -22,7 +16,7 @@ export default function App (){
         setTask('');
     }
 
-    const toggleToDo = (id:string) => {
+    const toggleToDo = (id) => {
         setToDos(prev => prev.map(t => ( t.id === id ? {...t, done:!t.done} : t) ))
     }
 
