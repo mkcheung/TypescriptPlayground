@@ -26,6 +26,10 @@ export default function App (){
         setToDos(prev => prev.map(t => ( t.id === id ? {...t, done:!t.done} : t) ))
     }
 
+    const removeToDo = (id:string) => {
+        setToDos(prev => prev.filter(t => t.id !== id) )
+    }
+
     return (
         <div style={{ maxWidth: 420, margin: "2rem auto", fontFamily: "system-ui, sans-serif" }}>
             <h1>Todo List</h1>
@@ -63,6 +67,9 @@ export default function App (){
                         <span>
                             {toDo.task}
                         </span>
+                        <button onClick={(e) => { e.stopPropagation(); removeToDo(toDo.id)}}>
+                            x
+                        </button>
                     </li>
                 ))}
             </ul>
