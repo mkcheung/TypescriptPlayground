@@ -1,51 +1,89 @@
-import React, { useState } from 'react'
+import React, { 
+    useCallback, 
+    useMemo, 
+    useState,  
+} from 'react';
 import './App.css'
 
-interface ToDos {
+interface ToDo {
     id:string
     task:string
     done:boolean
 }
 
-export default function App (){
-    const [toDos, setToDos] = useState<ToDos[]>([]);
-    const [task, setTask] = useState<string>('');
+type Filter = 'all' | 'active' | 'completed'
 
-    const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {
+export default function App () {
+    const [toDos, setToDos] = useState<ToDo[]>([]);
+    const [task, setTask] = useState<string>('');
+    const [filter, setFilter] = useState<Filter>('all');
+
+    const FILTERS = ['all', 'active', 'completed'] as const satisfies readonly Filter[];
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const value = task.trim();
         if(!value){
             return;
         }
-
         setToDos(prev => [...prev, {id:Date.now().toString(), task:value, done:false}]);
         setTask('');
     }
 
-    const toggleToDo = (id:string) => {
-        setToDos(prev => prev.map(t => ( t.id === id ? {...t, done:!t.done} : t) ))
-    }
+    const toggleToDo = useCallback((id:string) => {
+        setToDos(prev => prev.map(toDo => toDo.id === id ? { ...toDo, done:!toDo.done} : toDo));
+    }, [])
 
-    const removeToDo = (id:string) => {
-        setToDos(prev => prev.filter(t => t.id !== id) )
-    }
+    const removeToDo = useCallback((id:string) => {
+        setToDos(prev => prev.filter(toDo => toDo.id !== id))
+    }, [])
+
+    const visibleToDos = useMemo<ToDo[]>(() => {
+        if(filter === 'active'){
+            return toDos.filter(toDo => !toDo.done);
+        }
+        if(filter === 'completed'){
+            return toDos.filter(toDo => toDo.done);
+        }
+        return toDos;
+    }, [filter, toDos])
+
+    const remaining = useMemo<number>(() => {
+        const numRemain = toDos.filter(toDo => !toDo.done);
+        return numRemain.length;
+    }, [toDos])
 
     return (
         <div style={{ maxWidth: 420, margin: "2rem auto", fontFamily: "system-ui, sans-serif" }}>
             <h1>Todo List</h1>
-            <form onSubmit={handleSubmit}>
-                <input
-                    value={task}
-                    onChange={(e:React.ChangeEvent<HTMLInputElement>) => setTask(e.target.value) }
-                    placeholder="New Task"
-                />
-                <button type="submit">Add Task</button>
-            </form>
-            <ul style={{ marginTop:16, paddingLeft:0, listStyle:"none"}}>
-                {toDos.map(toDo => (
+            <div>
+                <form onSubmit={handleSubmit}>
+                    <input
+                        type='text'
+                        value={task}
+                        placeholder="New Task"
+                        onChange={(e:React.ChangeEvent<HTMLInputElement>) => setTask(e.target.value)}
+                    />
+                    <button type="submit">Add Task</button>
+                </form>
+            </div>
+
+            <div>
+                {
+                    FILTERS.map(item => (
+                        <button key={item} onClick={() => setFilter(item)}>{item[0].toUpperCase()+item.slice(1)}</button>
+                    ))
+                }
+                <div>
+                    {remaining} remaining
+                </div>
+            </div>
+
+            <ul>
+                {visibleToDos.map(toDo => (
                     <li
-                        id={toDo.id}
-                        onClick={()=>toggleToDo(toDo.id)}
+                        key={toDo.id}
+                        onClick={() => toggleToDo(toDo.id)}
                         style={{
                         display: "flex",
                         alignItems: "center",
@@ -59,15 +97,15 @@ export default function App (){
                         }}
                     >
                         <input
-                            type="checkbox"
+                            type='checkbox'
                             checked={toDo.done}
-                            onChange={() => toggleToDo(toDo.id)}
-                            onClick={(e:React.MouseEvent<HTMLInputElement>)=> e.stopPropagation()}
+                            onChange={() => toggleToDo(toDo.id) }
+                            onClick={(e:React.MouseEvent<HTMLInputElement>) => e.stopPropagation()}
                         />
                         <span>
                             {toDo.task}
                         </span>
-                        <button onClick={(e:React.MouseEvent<HTMLButtonElement>) => { e.stopPropagation(); removeToDo(toDo.id)}}>
+                        <button type="button" onClick={(e:React.MouseEvent<HTMLButtonElement>) => {e.stopPropagation(); removeToDo(toDo.id);}}>
                             x
                         </button>
                     </li>
