@@ -1,5 +1,6 @@
 import React, { 
     useCallback, 
+    useEffect,
     useMemo, 
     useState,  
 } from 'react';
@@ -14,11 +15,18 @@ interface ToDo {
 type Filter = 'all' | 'active' | 'completed'
 
 export default function App () {
-    const [toDos, setToDos] = useState<ToDo[]>([]);
+    const [toDos, setToDos] = useState<ToDo[]>(() => {
+        const saved = localStorage.getItem('todos');
+        return saved ? JSON.parse(saved) : [];
+    });
     const [task, setTask] = useState<string>('');
     const [filter, setFilter] = useState<Filter>('all');
 
     const FILTERS = ['all', 'active', 'completed'] as const satisfies readonly Filter[];
+
+    useEffect(() => {
+        localStorage.setItem('todos', JSON.stringify(toDos))
+    }, [toDos]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
