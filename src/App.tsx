@@ -46,6 +46,11 @@ export default function App () {
         setToDos(prev => prev.filter(toDo => toDo.id !== id))
     }, [])
 
+    const clearToDos = () => {
+        setToDos([]);
+        localStorage.removeItem('todos');
+    }
+
     const visibleToDos = useMemo<ToDo[]>(() => {
         if(filter === 'active'){
             return toDos.filter(toDo => !toDo.done);
@@ -82,6 +87,9 @@ export default function App () {
                         <button key={item} onClick={() => setFilter(item)}>{item[0].toUpperCase()+item.slice(1)}</button>
                     ))
                 }
+                <button onClick={clearToDos} style={{ marginLeft: "1rem", color: "red" }}>
+                    Reset
+                </button>
                 <div>
                     {remaining} remaining
                 </div>
