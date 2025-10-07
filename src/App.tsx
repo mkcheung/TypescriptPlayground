@@ -3,22 +3,46 @@ import React, {
     useEffect,
     useMemo, 
     useState,  
+    useReducer
 } from 'react';
-import { ToDo, Filter } from './types'
+import { ToDo, Action, Filter } from './typesAndInterfaces'
 import ToDoForm from './components/ToDoForm';
 import TodoList from './components/TodoList';
 import Toolbar from './components/Toolbar';
-
 import './App.css'
 
+function reducer(state: ToDo[], action: Action): ToDo[] {
+    switch(action.type){
+        case 'add':
+            return [...state, {id:Date.now().toString(), task:action.task, done:false}];
+        case 'remove':
+            return state.map(toDo => (
+                toDo.id !== action.id
+            ));
+        case 'toggle':
+            return state.map(toDo => (
+                toDo.id === action.id ? {...toDo, done:!toDo.done} : toDo
+            ));
+        case 'clear':
+            return [];
+        default:
+            return state;
+    }
+}
 
-export default function App () {
-    const [toDos, setToDos] = useState<ToDo[]>(() => {
+function init(): ToDo[] {
+    try {
         const saved = localStorage.getItem('todos');
         return saved ? JSON.parse(saved) : [];
-    });
+    } catch {
+        return []; 
+    }
+}
+
+export default function App () {
     const [task, setTask] = useState<string>('');
     const [filter, setFilter] = useState<Filter>('all');
+    const [toDos, dispatch] = useReducer(reducer, [], init);
 
     useEffect(() => {
         localStorage.setItem('todos', JSON.stringify(toDos))
@@ -30,20 +54,20 @@ export default function App () {
         if(!value){
             return;
         }
-        setToDos(prev => [...prev, {id:Date.now().toString(), task:value, done:false}]);
+        dispatch({type: 'add', task:value});
         setTask('');
     }
 
     const toggleToDo = useCallback((id:string) => {
-        setToDos(prev => prev.map(toDo => toDo.id === id ? { ...toDo, done:!toDo.done} : toDo));
+        dispatch({type: 'toggle', id:id});
     }, [])
 
     const removeToDo = useCallback((id:string) => {
-        setToDos(prev => prev.filter(toDo => toDo.id !== id))
+        dispatch({type: 'remove', id:id});
     }, [])
 
     const clearToDos = () => {
-        setToDos([]);
+        dispatch({type: 'clear'});
         localStorage.removeItem('todos');
     }
 

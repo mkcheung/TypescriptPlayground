@@ -3,7 +3,7 @@ import React from 'react';
 import { 
     type Filter,
     FILTERS
-} from './../types';
+} from '../typesAndInterfaces';
 
 interface ToolbarProps {
     setFilter: (item: Filter) => void;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ToDo } from './../types'
+import { ToDo } from '../typesAndInterfaces'
 
 interface TodoListProps {
     visibleToDos: readonly ToDo[];
