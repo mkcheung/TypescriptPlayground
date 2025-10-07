@@ -1,0 +1,21 @@
+
+import { ToDo, Action } from '../typesAndInterfaces'
+
+export function toDosReducer(state: ToDo[], action: Action): ToDo[] {
+    switch(action.type){
+        case 'add':
+            return [...state, {id:Date.now().toString(), task:action.task, done:false}];
+        case 'remove':
+            return state.filter(toDo => (
+                toDo.id !== action.id
+            ));
+        case 'toggle':
+            return state.map(toDo => (
+                toDo.id === action.id ? {...toDo, done:!toDo.done} : toDo
+            ));
+        case 'clear':
+            return [];
+        default:
+            return state;
+    }
+}

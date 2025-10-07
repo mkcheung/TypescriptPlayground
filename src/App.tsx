@@ -5,30 +5,12 @@ import React, {
     useState,  
     useReducer
 } from 'react';
-import { ToDo, Action, Filter } from './typesAndInterfaces'
+import { toDosReducer } from './reducers/toDosReducer';
+import { ToDo, Action, Filter } from './typesAndInterfaces';
 import ToDoForm from './components/ToDoForm';
 import TodoList from './components/TodoList';
 import Toolbar from './components/Toolbar';
 import './App.css'
-
-function reducer(state: ToDo[], action: Action): ToDo[] {
-    switch(action.type){
-        case 'add':
-            return [...state, {id:Date.now().toString(), task:action.task, done:false}];
-        case 'remove':
-            return state.map(toDo => (
-                toDo.id !== action.id
-            ));
-        case 'toggle':
-            return state.map(toDo => (
-                toDo.id === action.id ? {...toDo, done:!toDo.done} : toDo
-            ));
-        case 'clear':
-            return [];
-        default:
-            return state;
-    }
-}
 
 function init(): ToDo[] {
     try {
@@ -42,7 +24,7 @@ function init(): ToDo[] {
 export default function App () {
     const [task, setTask] = useState<string>('');
     const [filter, setFilter] = useState<Filter>('all');
-    const [toDos, dispatch] = useReducer(reducer, [], init);
+    const [toDos, dispatch] = useReducer(toDosReducer, [], init);
 
     useEffect(() => {
         localStorage.setItem('todos', JSON.stringify(toDos))
