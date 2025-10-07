@@ -16,6 +16,7 @@ export function toDosReducer(state: ToDo[], action: Action): ToDo[] {
         case 'clear':
             return [];
         default:
+            const exhaustiveCheck: never = action;
             return state;
     }
 }
