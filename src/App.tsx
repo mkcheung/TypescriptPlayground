@@ -6,7 +6,7 @@ import React, {
     useReducer
 } from 'react';
 import { toDosReducer } from './reducers/toDosReducer';
-import { ToDo, FILTER } from './typesAndInterfaces';
+import { FILTER, PRIORITY, ToDo } from './typesAndInterfaces';
 import ToDoForm from './components/ToDoForm';
 import ToDoList from './components/ToDoList';
 import Toolbar from './components/Toolbar';
@@ -22,8 +22,10 @@ function init(): ToDo[] {
 }
 
 export default function App () {
-    const [task, setTask] = useState<string>('');
+    const [dueDate, setDueDate] = useState<string>('');
     const [filter, setFilter] = useState<FILTER>('all');
+    const [priority, setPriority] = useState<PRIORITY>('medium');
+    const [task, setTask] = useState<string>('');
     const [toDos, dispatch] = useReducer(toDosReducer, [], init);
 
     useEffect(() => {
@@ -36,8 +38,11 @@ export default function App () {
         if(!value){
             return;
         }
-        dispatch({type: 'add', task:value});
+        const createdAt = new Date().toISOString().slice(0,10);
+        dispatch({type: 'add', dueDate:dueDate, priority:priority, createdAt:createdAt, task:value});
         setTask('');
+        setDueDate('');
+        setPriority('medium');
     }
 
     const toggleTask = useCallback((id:string) => {
@@ -53,15 +58,35 @@ export default function App () {
         localStorage.removeItem('todos');
     }
 
-    const visibleToDos = useMemo<ToDo[]>(() => {
+    const baseFiltered = useMemo<ToDo[]>(() => {
+        const todaysDate = new Date().toISOString().slice(0,10);
         if(filter === 'active'){
             return toDos.filter(toDo => !toDo.done);
         }
         if(filter === 'completed'){
             return toDos.filter(toDo => toDo.done);
         }
+        if(filter === 'today'){
+            return toDos.filter(todo => (todo.dueDate === todaysDate))
+        }
+        if(filter === 'overdue'){
+            return toDos.filter(todo => ( !todo.done && todo.dueDate && todo.dueDate > todaysDate))
+        }
         return toDos;
-    }, [filter, toDos])
+    }, [filter, toDos]);
+
+    const visibleToDos = useMemo<ToDo[]>(() => {
+        const prioRank: Record<PRIORITY, number> = { high: 0, medium: 1, low: 2 };
+        return [...baseFiltered].sort((a, b) => {
+            const ap = prioRank[a.priority], bp = prioRank[b.priority];
+            if (ap !== bp) return ap - bp;
+            if (a.dueDate && b.dueDate && a.dueDate !== b.dueDate) return a.dueDate < b.dueDate ? -1 : 1;
+            if (a.dueDate && !b.dueDate) return -1;
+            if (!a.dueDate && b.dueDate) return 1;
+            return (b.createdAt || '').localeCompare(a.createdAt || '');
+        });
+    }, [baseFiltered]);
+
 
     const remaining = useMemo<number>(() => {
         const numRemain = toDos.filter(toDo => !toDo.done);
@@ -72,7 +97,7 @@ export default function App () {
         <div style={{ maxWidth: 420, margin: "2rem auto", fontFamily: "system-ui, sans-serif" }}>
             <h1>Todo List</h1>
             <div>
-                <ToDoForm task={task} handleSubmit={handleSubmit} setTask={setTask}/>
+                <ToDoForm task={task} handleSubmit={handleSubmit} priority={priority} dueDate={dueDate} setDueDate={setDueDate} setTask={setTask} setPriority={setPriority}/>
             </div>
 
             <div>
