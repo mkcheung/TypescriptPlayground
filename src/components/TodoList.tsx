@@ -1,5 +1,4 @@
 import React from 'react';
-import { ToDo } from 'src/typesAndInterfaces';
 import { ToDoListProps } from 'src/typesAndInterfaces';
 
 export default function ToDoList({ visibleToDos, toggleTask, removeTask }: ToDoListProps) {
