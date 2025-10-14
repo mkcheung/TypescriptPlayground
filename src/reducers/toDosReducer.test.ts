@@ -3,20 +3,20 @@ import { toDosReducer } from './toDosReducer'
 import type { ToDo } from '../typesAndInterfaces'
 
 // Small helper to create a typed initial array
-function makeState(items: Partial<ToDo>[]): ToDo[] {
-    return items.map((t, i) => ({
-        id: t.id ?? String(i + 1),
-        task: t.task ?? `Task ${i + 1}`,
-        done: t.done ?? false,
-        priority: t.priority ?? 'low',
-        createdAt: t.createdAt ?? '2025-10-10T00:00:00.000Z',
-        dueDate: t.dueDate,
-    }))
-}
+// function makeState(items: Partial<ToDo>[]): ToDo[] {
+//     return items.map((t, i) => ({
+//         id: t.id ?? String(i + 1),
+//         task: t.task ?? `Task ${i + 1}`,
+//         done: t.done ?? false,
+//         priority: t.priority ?? 'low',
+//         createdAt: t.createdAt ?? '2025-10-10T00:00:00.000Z',
+//         dueDate: t.dueDate,
+//     }))
+// }
 
 describe('toDosReducer', () => {
     it('adds a task', () => {
-        const state = makeState([])
+        const state:ToDo[] = [];
         const dueDate = new Date('2025-11-01 00:00:00').toISOString().slice(0, 10);
         const todaysDate = new Date().toISOString().slice(0, 10);
         const next = toDosReducer(state, { type: 'add', task: 'Buy milk', priority: 'low', dueDate: dueDate, createdAt: todaysDate });
