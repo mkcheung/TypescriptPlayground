@@ -1,24 +1,31 @@
-import { describe, it, expect } from 'vitest'
+import { 
+    describe,
+    it,
+    expect,
+    vi,
+    beforeEach,
+    afterEach 
+} from 'vitest'
 import { toDosReducer } from './toDosReducer'
 import type { ToDo } from '../typesAndInterfaces'
 
-// Small helper to create a typed initial array
-// function makeState(items: Partial<ToDo>[]): ToDo[] {
-//     return items.map((t, i) => ({
-//         id: t.id ?? String(i + 1),
-//         task: t.task ?? `Task ${i + 1}`,
-//         done: t.done ?? false,
-//         priority: t.priority ?? 'low',
-//         createdAt: t.createdAt ?? '2025-10-10T00:00:00.000Z',
-//         dueDate: t.dueDate,
-//     }))
-// }
-
 describe('toDosReducer', () => {
+    const fixed = new Date('2025-10-14T08:00:00.000Z');
+    beforeEach(()=>{
+        vi.useFakeTimers();
+        vi.setSystemTime(fixed);
+    });
+
+    afterEach(()=>{
+        vi.useRealTimers();
+    });
+
     it('adds a task', () => {
         const state:ToDo[] = [];
-        const dueDate = new Date('2025-11-01 00:00:00').toISOString().slice(0, 10);
-        const todaysDate = new Date().toISOString().slice(0, 10);
+        const todaysDateTime = new Date();
+        const dueDateTime = new Date(todaysDateTime.getTime() + 3 * 24 * 60 * 1000);
+        const todaysDate = todaysDateTime.toISOString().slice(0, 10);
+        const dueDate = dueDateTime.toISOString().slice(0, 10);
         const next = toDosReducer(state, { type: 'add', task: 'Buy milk', priority: 'low', dueDate: dueDate, createdAt: todaysDate });
 
         expect(next).toHaveLength(1);
