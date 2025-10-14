@@ -6,9 +6,9 @@ import React, {
     useReducer
 } from 'react';
 import { toDosReducer } from './reducers/toDosReducer';
-import { ToDo, Action, Filter } from './typesAndInterfaces';
+import { ToDo, FILTER } from './typesAndInterfaces';
 import ToDoForm from './components/ToDoForm';
-import TodoList from './components/TodoList';
+import ToDoList from './components/ToDoList';
 import Toolbar from './components/Toolbar';
 import './App.css'
 
@@ -23,7 +23,7 @@ function init(): ToDo[] {
 
 export default function App () {
     const [task, setTask] = useState<string>('');
-    const [filter, setFilter] = useState<Filter>('all');
+    const [filter, setFilter] = useState<FILTER>('all');
     const [toDos, dispatch] = useReducer(toDosReducer, [], init);
 
     useEffect(() => {
@@ -40,11 +40,11 @@ export default function App () {
         setTask('');
     }
 
-    const toggleToDo = useCallback((id:string) => {
+    const toggleTask = useCallback((id:string) => {
         dispatch({type: 'toggle', id:id});
     }, [])
 
-    const removeToDo = useCallback((id:string) => {
+    const removeTask = useCallback((id:string) => {
         dispatch({type: 'remove', id:id});
     }, [])
 
@@ -80,7 +80,7 @@ export default function App () {
             </div>
 
             <ul>
-                <TodoList visibleToDos={visibleToDos} toggleToDo={toggleToDo} removeToDo={removeToDo} />
+                <ToDoList visibleToDos={visibleToDos} toggleTask={toggleTask} removeTask={removeTask} />
             </ul>
         </div>
     )

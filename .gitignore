@@ -22,4 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-src/scaffold.txt
+src/templateForBasics.txt
+src/templateForReducerPractice.txt
+src/typesAndInterfacesPractice.ts
+src/AppAside.jsx
+src/AppPracticejsx
+src/componentsPractice
+src/reducersPractice

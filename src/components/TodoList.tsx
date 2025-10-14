@@ -1,41 +1,39 @@
 import React from 'react';
-import { ToDo } from '../typesAndInterfaces'
+import { ToDo } from 'src/typesAndInterfaces';
+import { ToDoListProps } from 'src/typesAndInterfaces';
 
-interface TodoListProps {
-    visibleToDos: readonly ToDo[];
-    toggleToDo: (id:string) => void;
-    removeToDo: (id:string) => void;
-}
-
-export default function TodoList ({visibleToDos, toggleToDo, removeToDo}: TodoListProps) {
+export default function ToDoList({visibleToDos, toggleTask, removeTask}:ToDoListProps) {
     return (
         <>
             {visibleToDos.map(toDo => (
                 <li
-                    key={toDo.id}
-                    onClick={() => toggleToDo(toDo.id)}
+                    id={toDo.id}
+                    onClick={() => toggleTask(toDo.id)}
                     style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                    padding: "8px 10px",
-                    border: "1px solid #eee",
-                    borderRadius: 6,
-                    marginBottom: 8,
-                    cursor: "pointer",
-                    background: "#fff"
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        padding: "8px 10px",
+                        border: "1px solid #eee",
+                        borderRadius: 6,
+                        marginBottom: 8,
+                        cursor: "pointer",
+                        background: "#fff"
                     }}
                 >
                     <input
-                        type='checkbox'
-                        checked={toDo.done}
-                        onChange={() => toggleToDo(toDo.id) }
-                        onClick={(e:React.MouseEvent<HTMLInputElement>) => e.stopPropagation()}
+                        type="checkbox"
+                        onChange={() => toggleTask(toDo.id)}
+                        onClick={(e:React.MouseEvent<HTMLInputElement>) => {e.stopPropagation()}}
                     />
-                    <span>
-                        {toDo.task}
+                    <span style={{
+                        textDecoration: toDo.done ? "line-through" : "none",
+                        color: toDo.done ? "#777" : "#111",
+                        wordBreak: "break-word"
+                    }}>
+                    {toDo.task}
                     </span>
-                    <button type="button" onClick={(e:React.MouseEvent<HTMLButtonElement>) => {e.stopPropagation(); removeToDo(toDo.id);}}>
+                    <button onClick={(e:React.MouseEvent<HTMLButtonElement>) => {e.stopPropagation();removeTask(toDo.id)}}>
                         x
                     </button>
                 </li>

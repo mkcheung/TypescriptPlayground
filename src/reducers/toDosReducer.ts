@@ -1,7 +1,7 @@
 
-import { ToDo, Action } from '../typesAndInterfaces'
+import { ToDo, ACTIONS } from '../typesAndInterfaces'
 
-export function toDosReducer(state: ToDo[], action: Action): ToDo[] {
+export function toDosReducer(state: ToDo[], action: ACTIONS): ToDo[] {
     switch(action.type){
         case 'add':
             return [...state, {id:Date.now().toString(), task:action.task, done:false}];
@@ -16,7 +16,7 @@ export function toDosReducer(state: ToDo[], action: Action): ToDo[] {
         case 'clear':
             return [];
         default:
-            const exhaustiveCheck: never = action;
+            const exhaustiveCheck: never = action.type;
             return state;
     }
 }
