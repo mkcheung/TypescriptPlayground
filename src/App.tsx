@@ -6,12 +6,12 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
-    AppDispatch,
     add,
-    toggle as toggleAC,
+    AppDispatch,
+    clear as clearAC,
     remove as removeAC,
     RootState,
-    clear as clearAC 
+    toggle as toggleAC
 } from './store';
 import { FILTER, PRIORITY, ToDo } from './typesAndInterfaces';
 import ToDoForm from './components/ToDoForm';
@@ -58,7 +58,7 @@ export default function App () {
 
     const removeTask = useCallback((id:string) => {
         dispatch(removeAC({id}));
-    }, [])
+    }, [])                                                                                       
 
     const clearToDos = () => {
         dispatch(clearAC());

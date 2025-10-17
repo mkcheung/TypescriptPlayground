@@ -1,5 +1,9 @@
 import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { ToDo, PRIORITY } from './typesAndInterfaces'
+import type { 
+    FILTER,
+    PRIORITY,
+    ToDo
+} from './typesAndInterfaces'
 
 function load():ToDo[]{
     try {
@@ -28,18 +32,32 @@ const toDoSlice = createSlice({
                 done:false
             })
         },
+        clear: () => [],
+        remove:(state, action: PayloadAction<{id:string}>) => {
+            state.filter(task => task.id !== action.payload.id)
+        },
         toggle:(state, action: PayloadAction<{id:string}>) => {
             const task = state.find(t => (t.id === action.payload.id ))
             if(task){
                 task.done = !task.done;
             }
-        },
-        remove:(state, action: PayloadAction<{id:string}>) => {
-            state.filter(task => task.id !== action.payload.id)
-        },
-        clear: () => []
+        }
     }
 });
+
+export const { add, toggle, remove, clear } = toDoSlice.actions;
+
+const uiSlice = createSlice({
+    name: 'ui',
+    initialState: { filter: 'all' as FILTER},
+    reducers: {
+        setFilter:(state, action:PayloadAction<{filter:FILTER}>) => {
+            state.filter = action.payload.filter;
+        }
+    }
+})
+
+export const { setFilter } = uiSlice.actions;
 
 const persist = (storeAPI:any) => (next:any) => (action:any) => {
     const result = next(action);
@@ -47,11 +65,12 @@ const persist = (storeAPI:any) => (next:any) => (action:any) => {
     localStorage.setItem('toDos', JSON.stringify(state.todos));
     return result;
 }
-
-export const { add, toggle, remove, clear } = toDoSlice.actions;
  
 export const store = configureStore({
-    reducer: { todos: toDoSlice.reducer},
+    reducer: { 
+        todos: toDoSlice.reducer,
+        it: uiSlice.reducer
+    },
     middleware: (gdm) => gdm().concat(persist)
 });
 export type RootState = ReturnType<typeof store.getState>;
