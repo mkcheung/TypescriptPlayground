@@ -2,10 +2,17 @@ import React, {
     useCallback, 
     useEffect,
     useMemo, 
-    useState,  
-    useReducer
+    useState
 } from 'react';
-import { toDosReducer } from './reducers/toDosReducer';
+import { useDispatch, useSelector } from 'react-redux';
+import { 
+    AppDispatch,
+    add,
+    toggle as toggleAC,
+    remove as removeAC,
+    RootState,
+    clear as clearAC 
+} from './store';
 import { FILTER, PRIORITY, ToDo } from './typesAndInterfaces';
 import ToDoForm from './components/ToDoForm';
 import ToDoList from './components/ToDoList';
@@ -22,11 +29,12 @@ function init(): ToDo[] {
 }
 
 export default function App () {
+    const dispatch = useDispatch<AppDispatch>();
+    const toDos = useSelector((s: RootState) => s.todos);
     const [dueDate, setDueDate] = useState<string>('');
     const [filter, setFilter] = useState<FILTER>('all');
     const [priority, setPriority] = useState<PRIORITY>('medium');
     const [task, setTask] = useState<string>('');
-    const [toDos, dispatch] = useReducer(toDosReducer, [], init);
 
     useEffect(() => {
         localStorage.setItem('todos', JSON.stringify(toDos))
@@ -38,23 +46,22 @@ export default function App () {
         if(!value){
             return;
         }
-        const createdAt = new Date().toISOString().slice(0,10);
-        dispatch({type: 'add', dueDate:dueDate, priority:priority, createdAt:createdAt, task:value});
+        dispatch(add({dueDate, priority, task:value}));
         setTask('');
         setDueDate('');
         setPriority('medium');
     }
 
     const toggleTask = useCallback((id:string) => {
-        dispatch({type: 'toggle', id:id});
+        dispatch(toggleAC({id}));
     }, [])
 
     const removeTask = useCallback((id:string) => {
-        dispatch({type: 'remove', id:id});
+        dispatch(removeAC({id}));
     }, [])
 
     const clearToDos = () => {
-        dispatch({type: 'clear'});
+        dispatch(clearAC());
         localStorage.removeItem('todos');
     }
 
