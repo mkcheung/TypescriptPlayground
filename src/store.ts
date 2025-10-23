@@ -68,8 +68,8 @@ const persist = (storeAPI:any) => (next:any) => (action:any) => {
  
 export const store = configureStore({
     reducer: { 
-        todos: toDoSlice.reducer,
-        it: uiSlice.reducer
+        toDos: toDoSlice.reducer,
+        ui: uiSlice.reducer
     },
     middleware: (gdm) => gdm().concat(persist)
 });

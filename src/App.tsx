@@ -11,12 +11,14 @@ import {
     clear as clearAC,
     remove as removeAC,
     RootState,
+    setFilter,
     toggle as toggleAC
 } from './store';
-import { FILTER, PRIORITY, ToDo } from './typesAndInterfaces';
+import { FILTER, FILTERS, PRIORITY, ToDo } from './typesAndInterfaces';
 import ToDoForm from './components/ToDoForm';
 import ToDoList from './components/ToDoList';
 import Toolbar from './components/Toolbar';
+import { selectVisibleToDos, selectRemaining } from './selectors'
 import './App.css'
 
 function init(): ToDo[] {
@@ -30,9 +32,8 @@ function init(): ToDo[] {
 
 export default function App () {
     const dispatch = useDispatch<AppDispatch>();
-    const toDos = useSelector((s: RootState) => s.todos);
+    const toDos = useSelector((s: RootState) => s.toDos);
     const [dueDate, setDueDate] = useState<string>('');
-    const [filter, setFilter] = useState<FILTER>('all');
     const [priority, setPriority] = useState<PRIORITY>('medium');
     const [task, setTask] = useState<string>('');
 
@@ -65,40 +66,9 @@ export default function App () {
         localStorage.removeItem('todos');
     }
 
-    const baseFiltered = useMemo<ToDo[]>(() => {
-        const todaysDate = new Date().toISOString().slice(0,10);
-        if(filter === 'active'){
-            return toDos.filter(toDo => !toDo.done);
-        }
-        if(filter === 'completed'){
-            return toDos.filter(toDo => toDo.done);
-        }
-        if(filter === 'today'){
-            return toDos.filter(todo => (todo.dueDate === todaysDate))
-        }
-        if(filter === 'overdue'){
-            return toDos.filter(todo => ( !todo.done && todo.dueDate && todo.dueDate > todaysDate))
-        }
-        return toDos;
-    }, [filter, toDos]);
-
-    const visibleToDos = useMemo<ToDo[]>(() => {
-        const prioRank: Record<PRIORITY, number> = { high: 0, medium: 1, low: 2 };
-        return [...baseFiltered].sort((a, b) => {
-            const ap = prioRank[a.priority], bp = prioRank[b.priority];
-            if (ap !== bp) return ap - bp;
-            if (a.dueDate && b.dueDate && a.dueDate !== b.dueDate) return a.dueDate < b.dueDate ? -1 : 1;
-            if (a.dueDate && !b.dueDate) return -1;
-            if (!a.dueDate && b.dueDate) return 1;
-            return (b.createdAt || '').localeCompare(a.createdAt || '');
-        });
-    }, [baseFiltered]);
-
-
-    const remaining = useMemo<number>(() => {
-        const numRemain = toDos.filter(toDo => !toDo.done);
-        return numRemain.length;
-    }, [toDos])
+    const visibleToDos = useSelector(selectVisibleToDos);
+    const remaining = useSelector(selectRemaining)
+    const onFilter = (f: FILTER) => dispatch(setFilter(f))
 
     return (
         <div style={{ maxWidth: 420, margin: "2rem auto", fontFamily: "system-ui, sans-serif" }}>
@@ -108,7 +78,7 @@ export default function App () {
             </div>
 
             <div>
-                <Toolbar setFilter={setFilter} clearToDos={clearToDos} remaining={remaining} />
+                <Toolbar setFilter={onFilter} clearToDos={clearToDos} remaining={remaining} />
             </div>
 
             <ul>
