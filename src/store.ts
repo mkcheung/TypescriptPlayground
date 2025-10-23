@@ -49,15 +49,29 @@ export const { add, toggle, remove, clear } = toDoSlice.actions;
 
 const uiSlice = createSlice({
     name: 'ui',
-    initialState: { filter: 'all' as FILTER},
+    initialState: { 
+        dueDate: '',
+        filter: 'all' as FILTER,
+        priority: 'medium' as PRIORITY,
+        task: '',
+    },
     reducers: {
+        setDueDate:(state, action:PayloadAction<{dueDate:string}>) => {
+            state.dueDate = action.payload.dueDate;
+        },
         setFilter:(state, action:PayloadAction<{filter:FILTER}>) => {
             state.filter = action.payload.filter;
+        },
+        setPriority:(state, action:PayloadAction<{priority:PRIORITY}>) => {
+            state.priority = action.payload.priority;
+        },
+        setTask:(state, action:PayloadAction<{task:string}>) => {
+            state.task = action.payload.task;
         }
     }
 })
 
-export const { setFilter } = uiSlice.actions;
+export const { setDueDate, setFilter, setPriority, setTask } = uiSlice.actions;
 
 const persist = (storeAPI:any) => (next:any) => (action:any) => {
     const result = next(action);

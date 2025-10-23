@@ -2,8 +2,12 @@ import { createSelector } from '@reduxjs/toolkit';
 import type { RootState } from './store';
 import type { PRIORITY, ToDo } from './typesAndInterfaces';
 
-const selectTodos = (s: RootState) => s.toDos;
-const selectFilter = (s: RootState) => s.ui.filter;
+export const selectTodos = (s: RootState) => s.toDos;
+export const selectFilter = (s: RootState) => s.ui.filter;
+export const selectDueDate = (s: RootState) => s.ui.dueDate;
+export const selectPriority = (s: RootState) => s.ui.priority;
+export const selectTask = (s: RootState) => s.ui.task;
+export const selectForm = (s: RootState) => ({ task:s.ui.task, priority:s.ui.priority, dueDate:s.ui.dueDate})
 
 export const selectBaseFiltered = createSelector(
     [selectTodos, selectFilter],

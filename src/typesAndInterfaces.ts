@@ -7,15 +7,6 @@ export interface ToDo {
     done:boolean
 }
 
-export interface ToDoFormProps {
-    dueDate?: string;
-    priority: PRIORITY
-    task: string;
-    setTask: (value:string) => void;
-    setDueDate: (d:string) => void;
-    setPriority: (p:PRIORITY) => void;
-    handleSubmit: (e:React.FormEvent<HTMLFormElement>) => void; 
-}
 export interface ToDoListProps {
     visibleToDos: ToDo[],
     toggleTask: (id:string) => void,
@@ -23,7 +14,6 @@ export interface ToDoListProps {
 }
 
 export interface ToolBarProps {
-    setFilter: (filter:FILTER) => void;
     remaining: number;
     clearToDos: () => void;
 }
