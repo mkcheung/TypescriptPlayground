@@ -20,7 +20,7 @@ export const selectBaseFiltered = createSelector(
             return toDos.filter((toDo) => toDo.done);
         }
         if (filter === 'overdue') {
-            return toDos.filter((toDo) => (toDo.dueDate && toDo.dueDate > todaysDate));
+            return toDos.filter((toDo) => (toDo.dueDate && toDo.dueDate < todaysDate));
         }
         if (filter === 'today') {
             return toDos.filter((toDo) => toDo.dueDate === todaysDate)
