@@ -8,10 +8,7 @@ import {
     PRIORITY
 } from './../typesAndInterfaces';
 import { 
-    selectDueDate,
     selectForm,
-    selectPriority,
-    selectTask,
 } from './../selectors'
 import { 
     add,
