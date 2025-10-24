@@ -17,7 +17,7 @@ const initialState: ToDo[] = load();
 
 type AddPayload = { task:string; priority:PRIORITY; dueDate?:string }
 
-const toDoSlice = createSlice({
+export const toDoSlice = createSlice({
     name: 'toDos',
     initialState,
     reducers: {
@@ -34,7 +34,7 @@ const toDoSlice = createSlice({
         },
         clear: () => [],
         remove:(state, action: PayloadAction<{id:string}>) => {
-            state.filter(task => task.id !== action.payload.id)
+            return state.filter(task => task.id !== action.payload.id)
         },
         toggle:(state, action: PayloadAction<{id:string}>) => {
             const task = state.find(t => (t.id === action.payload.id ))
@@ -47,7 +47,7 @@ const toDoSlice = createSlice({
 
 export const { add, toggle, remove, clear } = toDoSlice.actions;
 
-const uiSlice = createSlice({
+export const uiSlice = createSlice({
     name: 'ui',
     initialState: { 
         dueDate: '',
