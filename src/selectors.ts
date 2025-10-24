@@ -56,7 +56,7 @@ export const selectVisibleToDos = createSelector(
 export const selectRemaining = createSelector(
     [selectTodos],
     (list) : number => {
-        const activeTasks = list.map((toDo) => !toDo.done);
+        const activeTasks = list.filter((toDo) => !toDo.done);
         return activeTasks.length;
     } 
 );
