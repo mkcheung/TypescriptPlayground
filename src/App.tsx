@@ -41,7 +41,6 @@ export default function App () {
     const visibleToDos = useSelector(selectVisibleToDos);
 
     useEffect(() => {
-        console.log('loaded')
         dispatch(appStarted());
     }, [dispatch]);
 
