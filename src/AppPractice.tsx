@@ -10,7 +10,7 @@ import './App.css'
 import ToDoForm from './componentsPractice/ToDoForm';
 import Toolbar from './componentsPractice/Toolbar';
 import { ToDo, FILTER, FILTERS } from './typesAndInterfacesPractice';
-import ToDoList from './componentsPractice/TodoList';
+import ToDoList from './componentsPractice/ToDoList';
 
 export default function App(){
 

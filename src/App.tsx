@@ -13,15 +13,13 @@ import {
 import { 
     add,
     AppDispatch,
+    appStarted,
     clear as clearAC,
     remove as removeAC,
     RootState,
-    setDueDate,
-    setPriority,
-    setTask,
     toggle as toggleAC
 } from './store';
-import { FILTER, FILTERS, PRIORITY, ToDo } from './typesAndInterfaces';
+import { ToDo } from './typesAndInterfaces';
 import ToDoForm from './components/ToDoForm';
 import ToDoList from './components/ToDoList';
 import Toolbar from './components/Toolbar';
@@ -43,8 +41,9 @@ export default function App () {
     const visibleToDos = useSelector(selectVisibleToDos);
 
     useEffect(() => {
-        localStorage.setItem('todos', JSON.stringify(toDos))
-    }, [toDos]);
+        console.log('loaded')
+        dispatch(appStarted());
+    }, [dispatch]);
 
     const toggleTask = useCallback((id:string) => {
         dispatch(toggleAC({id}));
@@ -56,7 +55,6 @@ export default function App () {
 
     const clearToDos = () => {
         dispatch(clearAC());
-        localStorage.removeItem('todos');
     }
 
     return (

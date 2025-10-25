@@ -15,7 +15,7 @@ export default function Toolbar({remaining, clearToDos}:ToolBarProps) {
         <>
             { 
                 FILTERS.map((item) => (
-                    <button onClick={() => dispatch(setFilter({filter:item}))}>{item[0].toUpperCase()+item.slice(1)}</button>
+                    <button key={item} onClick={() => dispatch(setFilter({filter:item}))}>{item[0].toUpperCase()+item.slice(1)}</button>
                 ))
             }
             <button onClick={() => clearToDos()}>Clear To Dos</button>

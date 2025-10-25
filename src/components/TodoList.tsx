@@ -6,7 +6,7 @@ export default function ToDoList({ visibleToDos, toggleTask, removeTask }: ToDoL
         <>
             {visibleToDos.map(toDo => (
                 <li
-                    id={toDo.id}
+                    key={toDo.id}
                     style={{
                         display: "flex",
                         justifyContent: "space-between",

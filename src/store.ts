@@ -1,11 +1,17 @@
 import createSagaMiddleware from 'redux-saga';
-import { all } from 'redux-saga/effects';
+import { 
+    all,
+    fork
+} from 'redux-saga/effects';
 import {
     configureStore,
     createAction,
     createSlice,
     PayloadAction
 } from '@reduxjs/toolkit'
+import { 
+    persistenceWatchers 
+} from './sagas/persistence';
 import type {
     FILTER,
     PRIORITY,
@@ -54,7 +60,7 @@ export const toDoSlice = createSlice({
     }
 });
 
-export const { add, toggle, remove, clear } = toDoSlice.actions;
+export const { add, toggle, remove, clear, hydrate} = toDoSlice.actions;
 export const appStarted = createAction('app/started');
 
 export const uiSlice = createSlice({
@@ -83,13 +89,6 @@ export const uiSlice = createSlice({
 
 export const { setDueDate, setFilter, setPriority, setTask } = uiSlice.actions;
 
-// const persist = (storeAPI:any) => (next:any) => (action:any) => {
-//     const result = next(action);
-//     const state = storeAPI.getState();
-//     localStorage.setItem('toDos', JSON.stringify(state.todos));
-//     return result;
-// }
-
 const sagaMw = createSagaMiddleware();
 
 export const store = configureStore({
@@ -102,7 +101,7 @@ export const store = configureStore({
 
 function* rootSaga() {
     yield all([
-        // put watchers here (persistence, ui, optimistic)
+        fork(persistenceWatchers),
     ]);
 }
 
