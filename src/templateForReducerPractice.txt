@@ -1,0 +1,98 @@
+import React, {
+    useCallback, 
+    useState,
+    useMemo, 
+    useEffect,
+    
+} from 'react';
+import './App.css'
+import ToDoForm from './components/ToDoForm';
+import TodoList from './components/TodoList';
+import Toolbar from './components/Toolbar';
+
+interface ToDo {
+    id:string
+    task:string
+    done:boolean
+}
+
+type FILTER = 'all' | 'active' | 'completed';
+
+
+export default function App() {
+
+    const [toDos, setToDos] = useState<ToDo[]>([]);
+    const [task, setTask] = useState<string>('');
+    const [filter, setFilter] = useState<FILTER>('all');
+
+    useEffect(()=>{
+        localStorage.setItem('toDos', JSON.stringify(toDos));
+    }, [toDos]);
+
+    const FILTERS = ['all', 'active', 'completed'] as const satisfies readonly FILTER[];
+
+    const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const value = task.trim();
+
+        if(!value){
+            return;
+        }
+        setToDos(prev => [...prev, {id:Date.now().toString(), task:task, done:false}]);
+        setTask('');
+    }
+
+    const toggleTask = useCallback((id:string) => {
+        setToDos(prev => prev.map((toDo) => (
+            id === toDo.id ? {...toDo, done:!toDo.done} : toDo
+        )))
+    }, []);
+
+    const removeTask = useCallback((id:string) => {
+        setToDos(prev => prev.filter((toDo) => {
+            toDo.id !== id
+        }))
+    }, []);
+
+    const visibleToDos = useMemo(() => {
+        if(filter === 'completed'){
+            return toDos.filter(toDo => (
+                toDo.done === true
+            ));
+        }
+        if(filter === 'active'){
+            return toDos.filter(toDo => (
+                toDo.done === false
+            ));
+        }
+        return toDos;
+    }, [toDos, filter]);
+
+    const remaining = useMemo(() => {
+        const incompleteTasks = toDos.filter(toDo => !toDo.done);
+        return incompleteTasks.length;
+    }, [toDos]);
+
+    const clearToDos = useCallback(() => {
+        setToDos([]);
+        setTask('');
+        localStorage.removeItem('todos');
+    }, []);
+
+    return (
+        <div style={{ maxWidth: 420, margin: "2rem auto", fontFamily: "system-ui, sans-serif" }}>
+            <h1>Todo List</h1>
+            <div>
+                <ToDoForm task={task} handleSubmit={handleSubmit} setTask={setTask}/>
+            </div>
+
+            <div>
+                <Toolbar setFilter={setFilter} clearToDos={clearToDos} remaining={remaining} />
+            </div>
+
+            <ul>
+                <TodoList visibleToDos={visibleToDos} toggleTask={toggleTask} removeTask={removeTask} />
+            </ul>
+        </div>
+    )
+}
