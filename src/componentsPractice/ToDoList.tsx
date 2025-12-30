@@ -1,18 +1,6 @@
 import React from "react";
 
-interface ToDoProps {
-    id: string
-    task: string
-    done: boolean
-}
-
-interface ToDoListProps {
-    visibleToDos: ToDoProps[]
-    toggleTask: (value: string) => void
-    removeTask: (value: string) => void
-}
-
-export default function ToDoList({ visibleToDos, toggleTask, removeTask }: ToDoListProps) {
+export default function ToDoList({ visibleToDos, toggleTask, removeTask }) {
     return (
         <ul style={{ marginTop: 16, paddingLeft: 0, listStyle: "none" }}>
             {visibleToDos.map((toDo) => (
@@ -33,12 +21,12 @@ export default function ToDoList({ visibleToDos, toggleTask, removeTask }: ToDoL
                 >
                     <input
                         type="checkbox"
+                        checked={toDo.done}
+                        onClick={(e) => e.stopPropagation()}
                         onChange={(e) => {
                             e.stopPropagation();
                             toggleTask(toDo.id);
                         }}
-                        checked={toDo.done}
-                        onClick={(e) => e.stopPropagation()}
                     />
                     <span
                         style={{
